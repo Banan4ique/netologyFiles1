@@ -4,50 +4,54 @@ import java.io.IOException;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        List<String> games = List.of("src", "res", "savegames", "temp");
-        List<String> src = List.of("main", "test");
-        List<String> res = List.of("drawables", "vectors", "icons");
-        List<String> main = List.of("Main.java", "Utils.java");
 
-        StringBuilder sb = new StringBuilder();
+    private static StringBuilder sb = new StringBuilder();
+
+    public static void main(String[] args) {
+        List<String> games = List.of("/users/admin/Games/src", "/users/admin/Games/res",
+                                    "/users/admin/Games/savegames", "/users/admin/Games/temp");
+        List<String> src = List.of("/users/admin/Games/src/main", "/users/admin/Games/src/test");
+        List<String> res = List.of("/users/admin/Games/res/drawables",
+                                "/users/admin/Games/res/vectors", "/users/admin/Games/res/icons");
+        List<String> main = List.of("/users/admin/Games/src/main/Main.java", "/users/admin/Games/src/main/Utils.java");
+        String tempFile = "/users/admin/Games/temp/temp.txt";
 
         for (String dir : games) {
-            String path = "/users/admin/Games/" + dir;
-            File newDir = new File(path);
-            if (newDir.mkdir())
-                sb.append(String.format("Каталог %s создан%n", path));
+            createDir(dir);
         }
         for (String dir : src) {
-            String path = "/users/admin/Games/src/" + dir;
-            File newDir = new File(path);
-            if (newDir.mkdir())
-                sb.append(String.format("Каталог %s создан%n", path));
+            createDir(dir);
         }
         for (String dir : res) {
-            String path = "/users/admin/Games/res/" + dir;
-            File newDir = new File(path);
-            if (newDir.mkdir())
-                sb.append(String.format("Каталог %s создан%n", path));
+            createDir(dir);
         }
         for (String file : main) {
-            String path = "/users/admin/Games/src/main/" + file;
-            File newFile = new File(path);
-            try {
-                if (newFile.createNewFile())
-                    sb.append(String.format("Файл %s создан%n", path));
-            } catch ( IOException e) {
-
-            }
+            createFile(file);
         }
-        String path = "/users/admin/Games/temp/temp.txt";
+        writeToFile(tempFile);
+    }
+
+    public static void createDir(String path) {
+        File newDir = new File(path);
+        if (newDir.mkdir())
+            sb.append(String.format("Каталог %s создан%n", path));
+        else
+            sb.append(String.format("Не удалось создать каталог %s%n", path));
+    }
+
+    public static File createFile(String path) {
         File newFile = new File(path);
         try {
             if (newFile.createNewFile())
                 sb.append(String.format("Файл %s создан%n", path));
         } catch ( IOException e) {
-            System.out.println(e.getMessage());
+            sb.append(String.format("Не удалось создать файл %s%n", path));
         }
+        return newFile;
+    }
+
+    public static void writeToFile(String path) {
+        File newFile = createFile(path);
         try(FileWriter writer = new FileWriter(newFile)) {
             writer.write(String.valueOf(sb));
         } catch (IOException e) {
